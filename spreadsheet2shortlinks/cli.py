@@ -162,7 +162,9 @@ def gsheet2rebrandly(rebrandly_api_key, gsheet, domain_name, yes, verbose, debug
     first = True
     last_links = None
     while first or last_links:
-        payload = {}
+        payload = {
+            'domain.fullName': domain_name,
+        }
         if last_links:
             payload.update({'last': last_links[-1]['id']})
 
