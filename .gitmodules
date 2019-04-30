@@ -1,0 +1,3 @@
+[submodule "civictechto_scripts"]
+	path = civictechto_scripts
+	url = https://github.com/CivicTechTO/civictechto-scripts.git

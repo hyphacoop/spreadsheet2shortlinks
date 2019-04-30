@@ -8,8 +8,8 @@ import requests
 import textwrap
 import urllib
 
-from commands.common import common_params
-from commands.utils.rebrandly import Rebrandly, AmbiguousCustomDomainError, NoCustomDomainsExistError
+from civictechto_scripts.commands.common import common_params
+from civictechto_scripts.commands.utils.rebrandly import Rebrandly, AmbiguousCustomDomainError, NoCustomDomainsExistError
 
 CONTEXT_SETTINGS = dict(help_option_names=['--help', '-h'])
 GSHEET_URL_RE = re.compile('https://docs.google.com/spreadsheets/d/([\w_-]+)/(?:edit|view)(?:#gid=([0-9]+))?')
