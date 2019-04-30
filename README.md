@@ -1,5 +1,7 @@
 # `spreadsheet2shortlinks`
 
+CLI tool for syncing Rebrandly shortlinks from a Google Spreadsheet.
+
 This command-line tool takes data from a GDrive spreadsheet
 ([sample][sample_shortlink_sheet]), and uses it to create/update
 shortlinks managed on Rebrandly.
