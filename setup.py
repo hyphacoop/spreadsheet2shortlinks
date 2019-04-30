@@ -9,6 +9,7 @@ setup(
     include_package_data=True,
     install_requires=[
         'Click',
+        'requests',
     ],
     # TODO: Fetch meetup-api from custom fork.
     entry_points={
