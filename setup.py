@@ -5,7 +5,7 @@ setup(
     version='0.1',
     # Look for anki package in anki/anki
     package_dir={'civictechto_scripts': 'civictechto_scripts'},
-    packages=find_packages() + find_packages('civictechto_scripts', include=['civictechto_scripts','*']),
+    packages=find_packages() + find_packages('civictechto_scripts', include=['*']),
     include_package_data=True,
     install_requires=[
         'Click',
