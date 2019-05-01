@@ -40,7 +40,7 @@ for better isolation of Python projects.
 
 ```
 # To use `pipenv` and an isolated project environment via `pipenv run`:
-$ pipenv install git+https://github.com/hyphacoop/spreadsheet2shortlinks#egg=spreadsheet2shortlinks
+$ pipenv install --editable git+https://github.com/hyphacoop/spreadsheet2shortlinks#egg=spreadsheet2shortlinks
 $ pipenv run anki-meetup-memorizer --help
 
 # You can set config via a dot-env file
