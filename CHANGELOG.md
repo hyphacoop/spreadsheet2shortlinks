@@ -11,3 +11,5 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Fixed
 - Fixed that links from wrong domains were being updated.
   [#4](https://github.com/hyphacoop/spreadsheet2shortlinks/issues/4)
+- Fixed incorrect install instructions.
+  [#6](https://github.com/hyphacoop/spreadsheet2shortlinks/issues/6)
