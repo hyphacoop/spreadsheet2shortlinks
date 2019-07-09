@@ -2,18 +2,22 @@
 
 CLI tool for syncing Rebrandly shortlinks from a Google Spreadsheet.
 
-This command-line tool takes data from a GDrive spreadsheet
-([sample][sample_shortlink_sheet]), and uses it to create/update
-shortlinks managed on Rebrandly.
-
-   [sample_shortlink_sheet]: https://docs.google.com/spreadsheets/d/12VUXPCpActC77wy6Q8Khyb-iZ_nlNwshO8XswYRj5XE/edit#gid=776462093
+This command-line tool takes data from a spreadsheet, and uses it to
+create/update shortlinks managed on Rebrandly. (For examples, see "Data
+Sources", under _Supported Platforms_ below.)
 
 ## Supported Platforms
 
 - Link Shorteners
   - Rebrandly
 - Data Sources
-  - Google Spreadsheets
+  - Google Spreadsheets. [Example.][example-gsheet]
+  - GitHub. [Example.][example-github]
+  - Raw CSV. [Example.][example-rawcsv]
+
+   [example-gsheet]: https://docs.google.com/spreadsheets/d/12VUXPCpActC77wy6Q8Khyb-iZ_nlNwshO8XswYRj5XE/edit#gid=776462093
+   [example-github]: https://github.com/hyphacoop/shortlinks/blob/kickstart/shortlinks.csv
+   [example-rawcsv]: https://raw.githubusercontent.com/hyphacoop/shortlinks/kickstart/shortlinks.csv
 
 ## Usage
 
@@ -41,7 +45,7 @@ for better isolation of Python projects.
 ```
 # To use `pipenv` and an isolated project environment via `pipenv run`:
 $ pipenv install --editable git+https://github.com/hyphacoop/spreadsheet2shortlinks#egg=spreadsheet2shortlinks
-$ pipenv run anki-meetup-memorizer --help
+$ pipenv run spreadsheet2shortlinks --help
 
 # You can set config via a dot-env file
 $ cp sample.env .env
