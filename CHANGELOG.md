@@ -8,6 +8,11 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- Added ability to parse plaintext CSVs.
+- Added ability to parse plaintext CSVs from GitHub HTML urls.
+
 ### Fixed
 - Fixed that links from wrong domains were being updated.
   [#4](https://github.com/hyphacoop/spreadsheet2shortlinks/issues/4)

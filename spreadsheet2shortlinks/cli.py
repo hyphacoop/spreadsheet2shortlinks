@@ -6,6 +6,7 @@ import pprint
 import re
 import requests
 import textwrap
+import time
 import urllib
 
 from civictechto_scripts.commands.common import common_params
@@ -13,6 +14,7 @@ from civictechto_scripts.commands.utils.rebrandly import Rebrandly, AmbiguousCus
 
 CONTEXT_SETTINGS = dict(help_option_names=['--help', '-h'])
 GSHEET_URL_RE = re.compile('https://docs.google.com/spreadsheets/d/([\w_-]+)/(?:edit|view)(?:#gid=([0-9]+))?')
+GITHUB_URL_RE = re.compile('https://github.com/([\w/_-]+)/blob/([\w_-]+)/([\w/_.-]+)')
 
 def parse_gsheet_url(url):
     matches = GSHEET_URL_RE.match(url)
@@ -29,12 +31,33 @@ def parse_gsheet_url(url):
 
     return spreadsheet_key, worksheet_id
 
+def parse_github_url(url):
+    matches = GITHUB_URL_RE.match(url)
+    slug, branch, path = matches.groups()
+    return slug, branch, path
+
 def lookup_link(links=[], slashtag=''):
     matched_link = [l for l in links if l['slashtag'] == slashtag]
     if matched_link:
         return matched_link.pop()
     else:
         return None
+
+def get_csv_url(url):
+    if 'docs.google.com' in url:
+        spreadsheet_key, worksheet_id = parse_gsheet_url(url)
+        csv_url_template = 'https://docs.google.com/spreadsheets/d/{key}/export?format=csv&id={key}&gid={id}'
+        csv_url = csv_url_template.format(key=spreadsheet_key, id=worksheet_id)
+    elif 'github.com' in url:
+        slug, branch, path = parse_github_url(url)
+        nonce = time.time()
+        # We use jsDelivr because GitHub aggressively caches without means to bust cache.
+        csv_url_template = 'https://cdn.jsdelivr.net/gh/{slug}@{branch}/{path}?n={nonce}'
+        csv_url = csv_url_template.format(slug=slug, branch=branch, path=path, nonce=nonce)
+    else:
+        csv_url = url
+
+    return csv_url
 
 # See: https://stackoverflow.com/a/36650753/504018
 class TitleParser(HTMLParser):
@@ -60,7 +83,7 @@ class TitleParser(HTMLParser):
 @click.option('--gsheet',
               required=True,
               envvar='SHORTLINK_GSHEET',
-              help='URL to publicly readable Google Spreadsheet, including sheet ID gid. Env:SHORTLINK_GSHEET',
+              help='URL to publicly readable plaintext CSV. Parses Google Sheets and GitHub URLs to fetch plaintext. Env:SHORTLINK_GSHEET',
               metavar='<url>')
 @click.option('--rebrandly-api-key',
               required=True,
@@ -101,26 +124,28 @@ def gsheet2rebrandly(rebrandly_api_key, gsheet, domain_name, yes, verbose, debug
     if noop: click.echo('>>> No-op mode: enabled (No operations affecting data will be run)')
 
     ### Fetch spreadsheet
+    csv_url = get_csv_url(gsheet)
 
-    spreadsheet_key, worksheet_id = parse_gsheet_url(gsheet)
-    CSV_URL_TEMPLATE = 'https://docs.google.com/spreadsheets/d/{key}/export?format=csv&id={key}&gid={id}'
-    csv_url = CSV_URL_TEMPLATE.format(key=spreadsheet_key, id=worksheet_id)
     # Fetch and parse shortlink CSV.
     r = requests.get(csv_url)
     if r.status_code != requests.codes.ok:
         raise click.Abort()
     csv_content = r.content.decode('utf-8')
-    csv_content = csv_content.split('\r\n')
+    csv_content = csv_content.splitlines()
 
     ### Confirm spreadsheet title
 
-    cd_header = r.headers.get('Content-Disposition')
-    # See: https://tools.ietf.org/html/rfc5987#section-3.2.1 (ext-value definition)
-    m = re.search("filename\*=(?P<charset>.+)'(?P<language>.*)'(?P<filename>.+)", cd_header)
-    filename = m.group('filename')
-    filename = urllib.parse.unquote(filename)
-    # Remove csv filename suffix.
-    filename = filename[:-len('.csv')]
+    if 'docs.google.com' in csv_url:
+        cd_header = r.headers.get('Content-Disposition')
+        # See: https://tools.ietf.org/html/rfc5987#section-3.2.1 (ext-value definition)
+        m = re.search("filename\*=(?P<charset>.+)'(?P<language>.*)'(?P<filename>.+)", cd_header)
+        filename = m.group('filename')
+        filename = urllib.parse.unquote(filename)
+        # Remove csv filename suffix.
+        filename = filename[:-len('.csv')]
+    else:
+        filename = 'None'
+
 
     ### Confirm domain
 
