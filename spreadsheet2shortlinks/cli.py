@@ -80,10 +80,10 @@ class TitleParser(HTMLParser):
             self.match = False
 
 @click.command(context_settings=CONTEXT_SETTINGS)
-@click.option('--gsheet',
+@click.option('--spreadsheet',
               required=True,
-              envvar='SHORTLINK_GSHEET',
-              help='URL to publicly readable plaintext CSV. Parses Google Sheets and GitHub URLs to fetch plaintext. Env:SHORTLINK_GSHEET',
+              envvar='SHORTLINK_SPREADSHEET',
+              help='URL to publicly readable plaintext CSV. Parses Google Sheets and GitHub URLs to fetch plaintext. Env:SHORTLINK_SPREADSHEET',
               metavar='<url>')
 @click.option('--rebrandly-api-key',
               required=True,
@@ -96,7 +96,7 @@ class TitleParser(HTMLParser):
               metavar='<example.com>')
 @common_params
 # TODO: Accomodate --verbose flag.
-def gsheet2rebrandly(rebrandly_api_key, gsheet, domain_name, yes, verbose, debug, noop):
+def spreadsheet2shortlinks(rebrandly_api_key, spreadsheet, domain_name, yes, verbose, debug, noop):
     """Create/update Rebrandly shortlinks from a spreadsheet (Google Docs, GitHub, raw CSV).
 
     Here are some notes on expected spreadsheet columns:
@@ -118,7 +118,7 @@ def gsheet2rebrandly(rebrandly_api_key, gsheet, domain_name, yes, verbose, debug
     if noop: click.echo('>>> No-op mode: enabled (No operations affecting data will be run)')
 
     ### Fetch spreadsheet
-    csv_url = get_csv_url(gsheet)
+    csv_url = get_csv_url(spreadsheet)
 
     # Fetch and parse shortlink CSV.
     r = requests.get(csv_url)
@@ -170,7 +170,7 @@ def gsheet2rebrandly(rebrandly_api_key, gsheet, domain_name, yes, verbose, debug
               * Spreadsheet URL:         {url}"""
               # TODO: Find and display spreadsheet title
               # Get from the file download name.
-        confirmation_details = confirmation_details.format(domain=domain_name, url=gsheet, name=filename)
+        confirmation_details = confirmation_details.format(domain=domain_name, url=spreadsheet, name=filename)
         click.echo(textwrap.dedent(confirmation_details))
 
     if not yes:
@@ -267,4 +267,4 @@ def gsheet2rebrandly(rebrandly_api_key, gsheet, domain_name, yes, verbose, debug
     if noop: click.echo('Command exited no-op mode without creating/updating any data.')
 
 if __name__ == '__main__':
-    gsheet2rebrandly()
+    spreadsheet2shortlinks()

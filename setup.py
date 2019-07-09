@@ -14,7 +14,7 @@ setup(
     # TODO: Fetch meetup-api from custom fork.
     entry_points={
         'console_scripts': [
-            'spreadsheet2shortlinks=spreadsheet2shortlinks.cli:gsheet2rebrandly',
+            'spreadsheet2shortlinks=spreadsheet2shortlinks.cli:spreadsheet2shortlinks',
         ],
     }
 )

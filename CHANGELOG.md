@@ -8,6 +8,10 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Changed
+
+- Changed flag from `--gsheet` to `--spreadsheet`.
+
 ### Added
 
 - Added ability to parse plaintext CSVs.
