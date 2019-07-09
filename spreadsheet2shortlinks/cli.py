@@ -97,26 +97,20 @@ class TitleParser(HTMLParser):
 @common_params
 # TODO: Accomodate --verbose flag.
 def gsheet2rebrandly(rebrandly_api_key, gsheet, domain_name, yes, verbose, debug, noop):
-    """Create/update Rebrandly shortlinks from a Google Docs spreadsheet.
+    """Create/update Rebrandly shortlinks from a spreadsheet (Google Docs, GitHub, raw CSV).
 
-    Here are some notes on spreadsheet columns:
+    Here are some notes on expected spreadsheet columns:
 
-        * slashtag: the shortlink component of path.
+        * keyword: the path component of shortlink, after slash.
 
-        * destination_url: where the shortlink points to. Leaving blank will delete on next run.
-
-        * If the following columns exist and a --google-creds option is passed, they will be updated:
-
-            * Note: These features are not yet implemented.
-
-            * created: date and time when the link was created and tracking began.
-
-            * clicks: number of click-through since creation.
+        * destination_url: where the shortlink points to. Leaving blank will delete shortlink.
 
         * Extra columns will have no effect.
 
-    Sample Spreadsheet:
+    Sample Spreadsheet URLs:
         https://docs.google.com/spreadsheets/d/12VUXPCpActC77wy6Q8Khyb-iZ_nlNwshO8XswYRj5XE/edit#gid=776462093
+        https://github.com/hyphacoop/shortlinks/blob/master/shortlinks.csv
+        https://raw.githubusercontent.com/hyphacoop/shortlinks/master/shortlinks.csv
     """
 
     if debug: click.echo('>>> Debug mode: enabled')

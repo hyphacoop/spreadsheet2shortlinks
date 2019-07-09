@@ -16,8 +16,8 @@ Sources", under _Supported Platforms_ below.)
   - Raw CSV. [Example.][example-rawcsv]
 
    [example-gsheet]: https://docs.google.com/spreadsheets/d/12VUXPCpActC77wy6Q8Khyb-iZ_nlNwshO8XswYRj5XE/edit#gid=776462093
-   [example-github]: https://github.com/hyphacoop/shortlinks/blob/kickstart/shortlinks.csv
-   [example-rawcsv]: https://raw.githubusercontent.com/hyphacoop/shortlinks/kickstart/shortlinks.csv
+   [example-github]: https://github.com/hyphacoop/shortlinks/blob/master/shortlinks.csv
+   [example-rawcsv]: https://raw.githubusercontent.com/hyphacoop/shortlinks/master/shortlinks.csv
 
 ## Usage
 
