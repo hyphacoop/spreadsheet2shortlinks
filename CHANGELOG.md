@@ -16,6 +16,8 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - Added ability to parse plaintext CSVs.
 - Added ability to parse plaintext CSVs from GitHub HTML urls.
+- GitHub: Allowed CSV to avoid branch-level caching, which can lead to
+  unexpected behaviour.
 
 ### Fixed
 - Fixed that links from wrong domains were being updated.

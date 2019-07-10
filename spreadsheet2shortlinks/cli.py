@@ -50,10 +50,12 @@ def get_csv_url(url):
         csv_url = csv_url_template.format(key=spreadsheet_key, id=worksheet_id)
     elif 'github.com' in url:
         slug, branch, path = parse_github_url(url)
-        nonce = time.time()
-        # We use jsDelivr because GitHub aggressively caches without means to bust cache.
-        csv_url_template = 'https://cdn.jsdelivr.net/gh/{slug}@{branch}/{path}?n={nonce}'
-        csv_url = csv_url_template.format(slug=slug, branch=branch, path=path, nonce=nonce)
+        # We get the head commit sha so that we avoid agressive GitHub caching when using branches as ref.
+        commits_url = 'https://api.github.com/repos/{slug}/commits?sha={ref}'.format(slug=slug, ref=branch)
+        r = requests.get(commits_url)
+        sha = r.json()[0]['sha']
+        csv_url_template = 'https://raw.githubusercontent.com/{slug}/{ref}/{path}'
+        csv_url = csv_url_template.format(slug=slug, ref=sha, path=path)
     else:
         csv_url = url
 
