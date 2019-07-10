@@ -36,8 +36,8 @@ def parse_github_url(url):
     slug, branch, path = matches.groups()
     return slug, branch, path
 
-def lookup_link(links=[], slashtag=''):
-    matched_link = [l for l in links if l['slashtag'] == slashtag]
+def lookup_link(links=[], keyword=''):
+    matched_link = [l for l in links if l['slashtag'] == keyword]
     if matched_link:
         return matched_link.pop()
     else:
@@ -200,20 +200,22 @@ def spreadsheet2shortlinks(rebrandly_api_key, spreadsheet, domain_name, yes, ver
     # Iterate through CSV content and perform actions on data
     reader = csv.DictReader(csv_content, delimiter=',')
     for row in reader:
-        link = lookup_link(all_links, row['slashtag'])
+        # TODO: Deprecate `slashtag` as column.
+        keyword = row.get('keyword') or row.get('slashtag')
+        link = lookup_link(all_links, keyword)
         if debug: click.echo(link, err=True)
 
         # If destination_url empty, delete link.
         if not row['destination_url']:
             if not link:
-                click.echo('Non-existent shortlink: {} (already deleted)'.format(row['slashtag']))
+                click.echo('Non-existent shortlink: {} (already deleted)'.format(keyword))
                 continue
 
             # NOTE: Not possible to "trash", only to fully delete, as per support chat question.
             r = requests.delete('https://api.rebrandly.com/v1/links/'+link['id'],
                                 headers={'apikey': rebrandly_api_key})
             if debug: click.echo(pprint.pformat(r))
-            click.echo('Deleted shortlink: '+row['slashtag'])
+            click.echo('Deleted shortlink: '+keyword)
             continue
 
         r = requests.get(row['destination_url'], allow_redirects=True)
@@ -225,7 +227,7 @@ def spreadsheet2shortlinks(rebrandly_api_key, spreadsheet, domain_name, yes, ver
         else:
             title = 'File: '+r.headers['Content-Type']
         payload = {
-            'slashtag': row['slashtag'],
+            'slashtag': keyword,
             # Don't use url with redirect resolution, because permissioned
             # pages (like Google Docs) will redirect to login page.
             'destination': row['destination_url'],
@@ -247,13 +249,13 @@ def spreadsheet2shortlinks(rebrandly_api_key, spreadsheet, domain_name, yes, ver
                 if r.status_code != requests.codes.ok:
                     click.echo(pprint.pformat(r.__dict__))
                     raise click.Abort()
-            click.echo('Updated shortlink: '+row['slashtag'])
+            click.echo('Updated shortlink: '+keyword)
         else:
             if noop:
                 pass
             else:
                 payload['domain'] = {'fullName': domain_name}
-                payload['slashtag'] = row['slashtag']
+                payload['slashtag'] = keyword
                 r = requests.post('https://api.rebrandly.com/v1/links',
                                   data=json.dumps(payload),
                                   headers={
@@ -264,7 +266,7 @@ def spreadsheet2shortlinks(rebrandly_api_key, spreadsheet, domain_name, yes, ver
                 if r.status_code != requests.codes.ok:
                     click.echo(pprint.pformat(r))
                     raise click.Abort()
-            click.echo('Created shortlink: '+row['slashtag'])
+            click.echo('Created shortlink: '+keyword)
 
     if noop: click.echo('Command exited no-op mode without creating/updating any data.')
 
